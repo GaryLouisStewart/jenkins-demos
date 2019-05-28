@@ -2,7 +2,6 @@ def label = "maven-${UUID.randomUUID().toString()}"
 
 podTemplate(label: label, containers: [
   containerTemplate(name: 'maven-build', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat')
-  ])
   containerTemplate(name: 'maven-test', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat')
   ]) {
 
