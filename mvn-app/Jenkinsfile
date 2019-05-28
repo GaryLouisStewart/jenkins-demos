@@ -1,15 +1,33 @@
 def label = "maven-${UUID.randomUUID().toString()}"
 
 podTemplate(label: label, containers: [
-  containerTemplate(name: 'maven', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat')
+  containerTemplate(name: 'maven-build', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat')
+  ])
+  containerTemplate(name: 'maven-test', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat')
   ]) {
 
   node(label) {
-    stage('Build a Maven project') {
+    stage('Checkout') {
       git 'https://github.com/GaryLouisStewart/jenkins-demos.git'
-      container('maven') {
-          sh 'cd mvn-app/ && mvn -B clean package'
-      }
+      parallel (
+        build: {
+          container('maven') {
+            stage('Build Maven App') {
+              sh 'cd mvn-app/ && mvn -B clean package'
+            }
+          }
+        },
+        test: {
+          container('maven') {
+            stage('Test Maven app') {
+              sh 'cd mvn-app/ && mvn test'
+              }
+            }   
+          }
+        )
+    }
+    stage('Logs') {
+      containerlog('maven-test')
+      contaienrlog('maven-build')
     }
   }
-}
