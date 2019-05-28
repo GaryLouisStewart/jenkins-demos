@@ -26,8 +26,8 @@ podTemplate(label: label, containers: [
         )
     }
     stage('Logs') {
-      containerlog('maven-test')
-      contaienrlog('maven-build')
+      containerLog('maven-test')
+      contaienrLog('maven-build')
     }
   }
 }
