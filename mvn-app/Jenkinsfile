@@ -17,7 +17,7 @@ podTemplate(label: label, containers: [
         },
         test: {
           container('maven-build') {
-            stage('Test Maven app') 
+            stage('Test Maven app') {
               steps {
                sh 'cd mvn-app/ && mvn test'
               }
@@ -31,11 +31,9 @@ podTemplate(label: label, containers: [
                 sh './jenkins/scripts/deliver.sh'
               }
             }   
-        }
-    )
-    stage('Logs') {
-      containerLog('maven-test')
-      containerLog('maven-build')
-   }
+          }
+        )
+      }
+    }
   }
 }
