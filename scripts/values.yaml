@@ -1,0 +1,20 @@
+master:
+  serviceType: NodePort
+  installPlugins:
+    - kubernetes:1.14.0
+    - workflow-job:2.31
+    - workflow-aggregator:2.6
+    - credentials-binding:1.17
+    - git:3.9.1
+    - blueocean:1.4.1
+    - pipeline-github-lib:1.0
+
+agent:
+  image: adriagalin/jenkins-jnlp-slave
+  imageTag: 1.4
+  alwaysPullImage: true
+  volumes:
+   - type: HostPath
+     volumeName: docker-sock
+     hostPath: /var/run/docker.sock
+     mountPath: /var/run/docker.sock

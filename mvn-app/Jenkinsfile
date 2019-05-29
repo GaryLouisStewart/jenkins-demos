@@ -1,8 +1,7 @@
 def label = "maven-${UUID.randomUUID().toString()}"
 
 podTemplate(label: label, containers: [
-  containerTemplate(name: 'maven-build', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
-  containerTemplate(name: 'maven-test', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat')
+  containerTemplate(name: 'maven-build', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat')
   ]) {
 
   node(label) {
@@ -17,12 +16,22 @@ podTemplate(label: label, containers: [
           }
         },
         test: {
-          container('maven-test') {
-            stage('Test Maven app') {
-              sh 'cd mvn-app/ && mvn test'
+          container('maven-build') {
+            stage('Test Maven app') 
+              steps {
+               sh 'cd mvn-app/ && mvn test'
               }
-            }   
-          }
+              post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+              }
+              stage('Deliver') {
+                steps {
+                  sh './jenkins/scripts/deliver.sh'
+                }
+              }   
+            }
         )
     }
     stage('Logs') {
