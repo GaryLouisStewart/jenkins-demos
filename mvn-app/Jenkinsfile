@@ -36,6 +36,6 @@ podTemplate(label: label, containers: [
     stage('Logs') {
       containerLog('maven-test')
       containerLog('maven-build')
-    }
+   }
   }
 }
