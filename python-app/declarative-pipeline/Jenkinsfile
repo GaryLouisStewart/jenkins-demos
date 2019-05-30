@@ -1,0 +1,19 @@
+pipeline {
+  agent {
+    kubernetes {
+      label 'python-example-1'
+      yamlFile 'python-app/declarative-pipeline/pythonContainer.yaml'
+    }
+  }
+  stages {
+    stage('Build Django polls models') {
+      steps {
+        sh "echo Building Django polls application..........."
+        container('python') {
+          sh 'echo MAVEN_CONTAINER_ENV_VAR = ${CONTAINER_ENV_VAR}'
+          sh 'cd python-app && python manage.py migrate'
+        }
+      }
+    }
+  }
+}
