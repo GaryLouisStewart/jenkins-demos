@@ -10,7 +10,6 @@ pipeline {
       steps {
         sh "echo Building Django polls application..........."
         container('python') {
-          sh 'echo MAVEN_CONTAINER_ENV_VAR = ${CONTAINER_ENV_VAR}'
           sh 'cd python-app && python manage.py migrate'
         }
       }
