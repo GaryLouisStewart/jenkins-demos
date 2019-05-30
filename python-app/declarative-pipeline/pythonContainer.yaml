@@ -1,6 +1,6 @@
 metadata:
   labels:
-    some-label: golang-example-1
+    some-label: python-django-polls
 spec:
   containers:
   - name: python
