@@ -6,11 +6,24 @@ pipeline {
     }
   }
   stages {
-    stage('Build Django polls models') {
+    stage('build') {
       steps {
-        sh "echo Building Django polls application..........."
+        sh "echo Build Django Polls Application.........."
         container('python') {
-          sh 'cd python-app && python manage.py migrate'
+          sh """
+          cd python-app/polls
+          python manage.py migrate
+          python manage.py makemigrations polls
+          python manage.py sqlmigrate polls 0001
+          """
+        }
+      }
+    }
+    stage('Test Django Polls Models') {
+      steps {
+        sh "echo Running tests.........."
+        container('python') {
+          sh 'cd python-app/polls && python manage.py test polls -v 2'
         }
       }
     }
