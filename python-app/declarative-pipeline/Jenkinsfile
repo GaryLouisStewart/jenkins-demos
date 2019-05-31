@@ -12,6 +12,7 @@ pipeline {
         container('python') {
           sh """
           cd python-app/polls_site
+          pip install django
           python manage.py migrate
           python manage.py makemigrations polls
           python manage.py sqlmigrate polls 0001
@@ -23,7 +24,11 @@ pipeline {
       steps {
         sh "echo Running tests.........."
         container('python') {
-          sh 'cd python-app/polls_site && python manage.py test polls -v 2'
+          sh """
+          cd python-app/polls_site
+          pip install django
+          python manage.py test polls -v 2  
+          """
         }
       }
     }
