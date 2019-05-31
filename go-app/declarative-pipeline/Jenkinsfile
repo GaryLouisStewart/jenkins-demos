@@ -1,0 +1,30 @@
+pipeline {
+  agent {
+    kubernetes {
+      label 'golang-ci'
+      yamlFile 'python-app/declarative-pipeline/goContainer.yaml'
+    }
+  }
+  stages {
+    stage('build golang Api') {
+      steps {
+        sh "echo Building golang Api.........."
+        container('golang-build') {
+          sh """
+          echo Not Implemented yet
+          """
+        }
+      }
+    }
+    stage('Test golang Api') {
+      steps {
+        sh "echo Running tests.........."
+        container('golang-tests') {
+          sh """
+          echo Not Implemented yet
+          """
+        }
+      }
+    }
+  }
+}

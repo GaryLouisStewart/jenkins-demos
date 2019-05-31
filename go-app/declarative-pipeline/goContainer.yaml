@@ -1,0 +1,17 @@
+metadata:
+  labels:
+    golang-build:-ci-build
+    golang-tests:ci-tests
+
+spec:
+  containers:
+  - name: golang
+    image: golang:1.12.5-alpine3.9
+    command:
+    - cat
+    tty: true
+  - name: golang-tests
+    image: golang:1.12.5-alpine3.9
+    command:
+    - cat
+    tty: true
