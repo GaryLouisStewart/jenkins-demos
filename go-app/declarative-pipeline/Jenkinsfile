@@ -2,7 +2,7 @@ pipeline {
   agent {
     kubernetes {
       label 'golang-ci'
-      yamlFile 'python-app/declarative-pipeline/goContainer.yaml'
+      yamlFile 'go-app/declarative-pipeline/goContainer.yaml'
     }
   }
   stages {
