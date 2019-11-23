@@ -1,0 +1,61 @@
+//define variables
+// No globals.
+
+// pipeline
+pipeline {
+  agent {
+    kubernetes {
+      label 'golang-ci'
+      yamlFile 'go-app/declarative-pipeline/goContainer.yaml'
+    }
+  }
+  stages {
+    stage('setup repository'){
+      def gitbranch='master'
+      def credentials='my-git-creds'
+      def gitrepo='https://github.com/GaryLouisStewart/LearningGo.git'
+      steps {
+        sh "echo Setting up credentials.........%"
+        git branch: ${gitbranch}
+        credentialsId: ${credentials}
+        url: ${gitrepo}
+      }
+    stage('Checkout code'){
+      checkout scm
+    }
+    // setup git repository
+    stage('git repo setup')
+    }
+    stage('Test golang Api') {
+      steps {
+        sh "echo Running tests..........%"
+        container('mock-api') {
+          sh """
+          cd mock-api && go build mock-api && do-something-awesome-here`
+          """
+        }
+      }
+    stage('mock-api') {
+      steps {
+        sh "echo Building golang Api..........%"
+        container('golang-build') {
+          sh """
+          echo Building mock-api......% \
+          && cd mock-api \
+          && go build mock-api
+          """
+        }
+      }
+    }
+    stage('Push image to docker-registry'){
+      steps {
+        def dockerrepo="psynapse/mock-api"
+        sh "echo Pushing image to docker registry ${dockerrepo}"
+        sh "cd mock-api"
+        def mock_api_image=docker.build(psynapse/mock-api:${env.BUILD_ID})
+        mock_api_image.push()
+      }
+    }
+  }
+  }
+}

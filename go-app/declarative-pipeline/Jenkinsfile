@@ -1,30 +1,88 @@
-pipeline {
-  agent {
-    kubernetes {
+// golang mock api jenkinsfile
+pipeline{
+    agent{
+      kubernetes {
       label 'golang-ci'
       yamlFile 'go-app/declarative-pipeline/goContainer.yaml'
     }
   }
-  stages {
-    stage('build golang Api') {
-      steps {
-        sh "echo Building golang Api.........."
-        container('golang-build') {
-          sh """
-          echo Not Implemented yet
-          """
-        }
-      }
     }
-    stage('Test golang Api') {
-      steps {
-        sh "echo Running tests.........."
-        container('golang-tests') {
-          sh """
-          echo Not Implemented yet
-          """
+    stages{
+        stage("Checkout code"){
+            steps{
+                def gitbranch='master'
+                def credentials='my-git-creds'
+                def gitrepo='https://github.com/GaryLouisStewart/LearningGo.git
+                echo "========waiting to checkout code.......%========"
+                git branch: ${gitbranch}
+                credentialsId: ${credentials}
+                url: ${gitrepo}
+                checkout scm
+            }
+            post{
+                always{
+                    echo "========Checking out code========"
+                }
+                success{
+                    echo "========Checkout code executed successfully========"
+                }
+                failure{
+                    echo "========checkout code execution failed========"
+                }
+            }
         }
-      }
+        stage('mock-api') {
+            steps {
+            sh "echo Building golang Api..........%"
+            container('golang-build') {
+                sh """
+                echo Building mock-api......% \
+                && cd mock-api \
+                && go build mock-api
+                """
+               }
+            }
+            post{
+                always{
+                    echo "========Building mock api========"
+                }
+                success{
+                    echo "========mock api build executed successfully========"
+                }
+                failure{
+                    echo "========mock api build execution failed========"
+                }
+            }
+        }
+        stage('Push image to docker-registry'){
+            steps {
+                sh "echo Pushing image to docker registry ${dockerrepo}"
+                sh "cd mock-api"
+                def mock_api_image=docker.build(mock_api_image:${env.BUILD_ID})
+                mock_api_image.push()
+            }
+            post{
+                always{
+                    echo "========pushing image to docker registry========"
+                }
+                success{
+                    echo "========Image push executed successfully========"
+                }
+                failure{
+                    echo "========Image push execution failed========"
+                }
+            }
+        }
     }
-  }
+    post{
+        always{
+            echo "========Mock api pipeline completed========"
+        }
+        success{
+            echo "========pipeline executed successfully ========"
+        }
+        failure{
+            echo "========pipeline execution failed========"
+        }
+    }
 }
